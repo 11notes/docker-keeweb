@@ -1,0 +1,22 @@
+{
+    "settings":{
+        "theme":"te",
+        "locale":"en",
+        "autoUpdate":false,
+        "colorfulIcons":true,
+        "fontSize":1,
+        "canImportXml":false,
+        "canCreate":false,
+        "canOpenDemo":false,
+        "webdav":true,
+        "webdavSaveMethod":"put",
+        "hideEmptyFields":false,
+        "autoSave":true,
+        "idleMinutes":15
+    },
+    "files":[{
+        "storage":"webdav",
+        "name":"default",
+        "path":"/db/default.kdbx"
+    }]
+}
