@@ -1,4 +1,4 @@
-# docker-keweb
+# docker-keeweb
 Keeweb with local hosted kdbx files (nginx, webdav, http auth). The idea is to mount the kdbx from another source (nfs, cifs, etc) and use them localy within keeweb, secured by HTTP auth and SSL.
 
 ## Volumes
