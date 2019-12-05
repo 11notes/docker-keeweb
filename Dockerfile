@@ -39,6 +39,7 @@
     VOLUME ["/keeweb/www/etc", "/keeweb/www/db"]
 
 # :: Monitor
+    RUN apk --update add curl
     HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
 
 # :: Start
