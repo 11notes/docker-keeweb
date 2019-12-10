@@ -19,7 +19,7 @@
         && apk del .tools
 
     RUN apk add --update \
-            openssl \
+            openssl curl \
         && rm /nginx/etc/default.conf
 
     ADD ./source/keeweb.conf /nginx/etc/default.conf
