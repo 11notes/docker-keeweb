@@ -5,7 +5,7 @@ then
     openssl req -x509 -newkey rsa:${SSL_RSA_BITS} -subj "/C=XX/ST=XX/L=XX/O=XX/OU=XX/CN=XX" \
         -keyout "${SSL_ROOT}/key.pem" \
         -out "${SSL_ROOT}/cert.pem" \
-        -days 3650 -nodes -sha256 &> /dev/null
+        -days 7300 -nodes -sha256 &> /dev/null
     echo "${SSL_RSA_BITS}bit RSA key created!"
 fi
 
