@@ -13,7 +13,8 @@
         /keeweb/www/etc \
         /keeweb/www/db
 
-    ADD https://github.com/keeweb/keeweb/archive/gh-pages.zip /keeweb/www
+    ADD https://github.com/keeweb/keeweb/archive/gh-pages.zip /keeweb
+    RUN mv /keepweb/keeweb-gh-pages /keeweb/www
 
     RUN sed -i 's/(no-config)/\/etc\/default.json/g' /keeweb/www/index.html
 
