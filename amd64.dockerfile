@@ -1,49 +1,60 @@
-# :: Header
-    FROM 11notes/nginx:stable
+# :: Build
+  FROM alpine as build
+  ENV keewebVersion=1.18.7
 
-    # :: SSL Settings
-        ENV SSL_RSA_BITS=4096
-        ENV SSL_DH_BITS=1024
-        ENV SSL_ROOT="/keeweb/ssl"
+  ADD https://github.com/keeweb/keeweb/releases/download/v${keewebVersion}/KeeWeb-${keewebVersion}.html.zip /tmp
+  RUN set -ex; \
+    mkdir -p /opt/keeweb; \
+    apk add --update --no-cache \
+        unzip; \
+    unzip /tmp/KeeWeb-${keewebVersion}.html.zip -d /opt/keeweb;
+
+
+# :: Header
+  FROM 11notes/nginx:stable
+  COPY --from=build /opt/keeweb/ /keeweb/www
+
+  ENV SSL_RSA_BITS=4096
+  ENV SSL_DH_BITS=1024
+  ENV SSL_ROOT="/keeweb/ssl"
 
 # :: Run
-    USER root
+  USER root
+
+  # :: update image
+    RUN set -ex; \
+      apk update; \
+      apk --update --no-cache add \
+        openssl; \
+      apk upgrade;
+
+  # :: prepare image
     RUN set -ex; \ 
-        mkdir -p \
-            /keeweb/ssl \
-            /keeweb/www/etc \
-            /keeweb/www/db;
-
-    ADD https://github.com/keeweb/keeweb/archive/gh-pages.zip /tmp
-
-    RUN set ex; \
-        apk add --no-cache --virtual .build \
-            unzip; \
-        unzip /tmp/gh-pages.zip -d /tmp; \
-        cp -r /tmp/keeweb-gh-pages/* /keeweb/www; \
-        apk del .build; \
-        rm -rf /tmp/*;
+      mkdir -p \
+        /keeweb/ssl \
+        /keeweb/www/etc \
+        /keeweb/www/db;
 
     RUN set -ex; \
-        sed -i 's/(no-config)/\/etc\/default.json/g' /keeweb/www/index.html;
+      sed -i 's/(no-config)/\/etc\/default.json/g' /keeweb/www/index.html;
 
-    # :: copy root filesystem changes
-        COPY ./rootfs /
+  # :: copy root filesystem changes and add execution rights to init scripts
+    COPY ./rootfs /
+    RUN set -ex; \
+      chmod +x -R /usr/local/bin
 
-    # :: docker -u 1000:1000 (no root initiative)
-        RUN set -ex; \
-            chown -R nginx:nginx /keeweb;
+  # :: change home path for existing user and set correct permission
+    RUN set -ex; \
+      usermod -d /keeweb docker; \
+      chown -R 1000:1000 \
+        /keeweb;
 
 # :: Volumes
-    VOLUME ["/keeweb/www/etc", "/keeweb/www/db"]
+  VOLUME ["/keeweb/www/etc", "/keeweb/www/db"]
 
 # :: Monitor
-    RUN apk --update add curl
-    RUN chmod +x /usr/local/bin/healthcheck.sh
-    HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
+  HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
 
 # :: Start
-    RUN apk --update add openssl
-    RUN chmod +x /usr/local/bin/entrypoint.sh
-    USER nginx
-    ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+  USER docker
+  ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

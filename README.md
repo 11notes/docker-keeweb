@@ -1,32 +1,43 @@
-# docker-keeweb
-Keeweb with local hosted kdbx files (nginx, webdav, http auth). The idea is to mount the kdbx from another source (nfs, cifs) and use them localy within keeweb, secured by HTTP auth and SSL.
+# Alpine :: KeeWeb
+Run KeeWeb based on Alpine Linux. Small, lightweight, secure and fast.
+
+Keeweb with local hosted kdbx files (nginx, webdav, http auth). The idea is to mount the kdbx from another source (NFS, CIFS or -v) and use them localy within keeweb, secured by HTTP auth and SSL.
 
 ## Volumes
-* /keeweb/www/etc - Purpose: Location of keeweb json config file
-* /keeweb/www/db - Purpose: kdbx database location (used for webdav)
+* **/keeweb/www/etc** - Directory of keeweb json config file
+* **/keeweb/www/db** - Directory of database location
 
 ## Run
 ```shell
 docker run --name keeweb \
-    -v volume-etc:/keeweb/www/etc  \
-    -v volume-db:/keeweb/www/db \
-    -d 11notes/keeweb:[tag]
+  -v ../keeweb/etc:/keeweb/www/etc  \
+  -v ../keeweb/db:/keeweb/www/db \
+  -d 11notes/keeweb:[tag]
 ```
 
 ## Defaults
+| Parameter | Value | Description |
+| --- | --- | --- |
+| `user` | docker | user docker |
+| `uid` | 1000 | user id 1000 |
+| `gid` | 1000 | group id 1000 |
+| `ssl` | 4096bit | 4k RSA for nginx |
+| `dh` | 1024bit | 1k RSA for DH |
+
+## Demo Parameters
 * HTTP 401 / user:foo / password:bar (/keeweb/www/.htpasswd) - please change!
 * Keepass default.kdbx / password:foo - please use your own kdbx files!
 * keeweb / /keeweb/www/etc/default.json - please adjust with your settings!
 * kdbx / /keeweb/www/db/default.kdbx - please use your own kdbx files!
-* 4096bit runtime RSA & 1024bit runtime DH (created at container start)
 
-## Docker -u 1000:1000 (no root initiative)
-As part to make containers more secure, this container will not run as root, but as uid:gid 1000:1000. Therefore the default TCP port 443 was changed to 8443.
+## Parent
+* [11notes/nginx:stable](https://github.com/11notes/docker-nginx)
 
-## Build with
-* [11notes/nginx:stable](https://github.com/11notes/docker-nginx) - Parent container
-* [Keeweb](https://keeweb.info/) - Keeweb KeePass web interface
+## Built with
+* [Alpine Linux](https://alpinelinux.org/)
+* [KeeWeb](https://keeweb.info/)
 
 ## Tips
-* [Permanent Storge with NFS/CIFS/...](https://github.com/11notes/alpine-docker-netshare) - Module to store permanent container data via NFS/CIFS/...
+* Don't bind to ports < 1024 (requires root), use NAT/reverse proxy
+* [Permanent Stroage](https://github.com/11notes/alpine-docker-netshare) - Module to store permanent container data via NFS/CIFS and more
 * [Keepassium](https://keepassium.com/) - KeePass mobile app
