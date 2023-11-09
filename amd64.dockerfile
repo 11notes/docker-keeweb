@@ -5,18 +5,15 @@
   ADD https://github.com/keeweb/keeweb/releases/download/v${keewebVersion}/KeeWeb-${keewebVersion}.html.zip /tmp
   RUN set -ex; \
     mkdir -p /opt/keeweb; \
-    apk add --update --no-cache \
-        unzip; \
+    apk --no-cache add \
+      unzip; \
     unzip /tmp/KeeWeb-${keewebVersion}.html.zip -d /opt/keeweb;
 
 
 # :: Header
   FROM 11notes/nginx:stable
   COPY --from=build /opt/keeweb/ /keeweb/www
-
-  ENV SSL_RSA_BITS=4096
-  ENV SSL_DH_BITS=1024
-  ENV SSL_ROOT="/keeweb/ssl"
+  ENV APP_ROOT=/keeweb
 
 # :: Run
   USER root
@@ -24,19 +21,19 @@
   # :: update image
     RUN set -ex; \
       apk update; \
-      apk --update --no-cache add \
+      apk --no-cache add \
         openssl; \
       apk upgrade;
 
   # :: prepare image
     RUN set -ex; \ 
       mkdir -p \
-        /keeweb/ssl \
-        /keeweb/www/etc \
-        /keeweb/www/db;
+        ${APP_ROOT}/ssl \
+        ${APP_ROOT}/www/etc \
+        ${APP_ROOT}/www/db;
 
     RUN set -ex; \
-      sed -i 's/(no-config)/\/etc\/default.json/g' /keeweb/www/index.html;
+      sed -i 's/(no-config)/\/etc\/default.json/g' ${APP_ROOT}/www/index.html;
 
   # :: copy root filesystem changes and add execution rights to init scripts
     COPY ./rootfs /
@@ -45,12 +42,12 @@
 
   # :: change home path for existing user and set correct permission
     RUN set -ex; \
-      usermod -d /keeweb docker; \
+      usermod -d ${APP_ROOT} docker; \
       chown -R 1000:1000 \
-        /keeweb;
+        ${APP_ROOT};
 
 # :: Volumes
-  VOLUME ["/keeweb/www/etc", "/keeweb/www/db"]
+  VOLUME ["${APP_ROOT}/www/etc", "${APP_ROOT}/www/db"]
 
 # :: Monitor
   HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
