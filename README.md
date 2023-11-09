@@ -12,6 +12,7 @@ Keeweb with local hosted kdbx files (nginx, webdav, http auth). The idea is to m
 ## Run
 ```shell
 docker run --name keeweb \
+  -p 8443:8443 \
   -v ../etc:/keeweb/www/etc  \
   -v ../db:/keeweb/www/db \
   -d 11notes/keeweb:[tag]
