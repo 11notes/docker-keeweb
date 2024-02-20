@@ -1,3 +1,6 @@
+# :: QEMU
+  FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
+
 # :: Util
   FROM alpine as util
 
@@ -19,7 +22,8 @@
 
 
 # :: Header
-  FROM 11notes/nginx:stable
+  FROM 11notes/nginx:arm64v8-stable
+  COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
   COPY --from=util /util/linux/shell/elevenLogJSON /usr/local/bin
   COPY --from=build /opt/keeweb/ /keeweb/www
   ENV APP_ROOT=/keeweb
