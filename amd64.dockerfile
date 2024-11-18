@@ -20,7 +20,7 @@
 
 # :: Header
   FROM 11notes/nginx:stable
-  COPY --from=util /util/linux/shell/elevenLogJSON /usr/local/bin
+  COPY --from=util /util/docker /usr/local/bin
   COPY --from=build /opt/keeweb/ /keeweb/static
   ENV APP_ROOT=/keeweb
   ENV APP_NAME="keeweb"

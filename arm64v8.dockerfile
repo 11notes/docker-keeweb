@@ -23,7 +23,7 @@
 # :: Header
   FROM --platform=linux/arm64 11notes/nginx:stable
   COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
-  COPY --from=util /util/linux/shell/elevenLogJSON /usr/local/bin
+  COPY --from=util /util/docker /usr/local/bin
   COPY --from=build /opt/keeweb/ /keeweb/static
   ENV APP_ROOT=/keeweb
   ENV APP_NAME="keeweb"
