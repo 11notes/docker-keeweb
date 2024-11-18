@@ -20,33 +20,30 @@
       unzip; \
     unzip /tmp/KeeWeb-${BUILD_VERSION}.html.zip -d /opt/keeweb;
 
-
 # :: Header
-  FROM 11notes/nginx:arm64v8-stable
+  FROM --platform=linux/arm64 11notes/nginx:stable
   COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
   COPY --from=util /util/linux/shell/elevenLogJSON /usr/local/bin
-  COPY --from=build /opt/keeweb/ /keeweb/www
+  COPY --from=build /opt/keeweb/ /keeweb/static
   ENV APP_ROOT=/keeweb
   ENV APP_NAME="keeweb"
+  ENV APP_VERSION=1.18.7
 
-# :: Run
+  # :: Run
   USER root
 
   # :: update image
     RUN set -ex; \
-      apk --no-cache add \
-        openssl; \
-      apk --no-cache upgrade;
+      apk --no-cache --update add \
+        openssl;
 
   # :: prepare image
     RUN set -ex; \ 
       mkdir -p \
-        ${APP_ROOT}/ssl \
-        ${APP_ROOT}/www/etc \
-        ${APP_ROOT}/www/db;
+        ${APP_ROOT}/etc;
 
     RUN set -ex; \
-      sed -i 's/(no-config)/\/etc\/default.json/g' ${APP_ROOT}/www/index.html;
+      sed -i 's@(no-config)@/default.json@g' ${APP_ROOT}/static/index.html;
 
   # :: copy root filesystem changes and add execution rights to init scripts
     COPY ./rootfs /
@@ -60,7 +57,7 @@
         ${APP_ROOT};
 
 # :: Volumes
-  VOLUME ["${APP_ROOT}/www/etc", "${APP_ROOT}/www/db"]
+  VOLUME ["${APP_ROOT}/etc", "${APP_ROOT}/var"]
 
 # :: Monitor
   HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1

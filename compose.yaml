@@ -1,0 +1,44 @@
+name: "keeweb"
+services:
+  keeweb:
+    image: "11notes/keeweb:1.18.7"
+    environment:
+      TZ: Europe/Zurich
+      # user1 // foo
+      # user2 // bar
+      # escape $ with $$
+      KEEWEB_HTPASSWD: |-
+        user1:$$apr1$$lG5s/RN7$$jJ7nREeEyIJ155IA5jT9h1
+        user2:$$apr1$$fT6w1aEW$$OJ4bzrQBlfPMM1RLV.Obf/
+      KEEWEB_CONFIG: |-
+        {
+          "settings":{
+            "theme":"te",
+            "locale":"en",
+            "autoUpdate":false,
+            "colorfulIcons":true,
+            "fontSize":1,
+            "canImportXml":false,
+            "canCreate":false,
+            "canOpenDemo":false,
+            "webdav":true,
+            "webdavSaveMethod":"put",
+            "hideEmptyFields":false,
+            "autoSave":true,
+            "idleMinutes":15
+          },
+          "files":[{
+            "storage":"webdav",
+            "name":"default",
+            "path":"/var/default.kdbx"
+          }]
+        }
+    volumes:
+      - "etc:/keeweb/etc"
+      - "var:/keeweb/var"
+    ports:
+      - "8443:8443/tcp"
+    restart: always
+volumes:
+  etc:
+  var:
