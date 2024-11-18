@@ -14,10 +14,14 @@ jobs:
   release:
     name: release
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./
     steps:
-      - name: ls
+      - name: find
         run: |
-          ls -lah
+          find / -name RELEASE.md
       - name: create release notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
