@@ -23,4 +23,5 @@ jobs:
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
-              -F ./RELEASE.md
+              -F RELEASE.md
+        working-directory: repo
