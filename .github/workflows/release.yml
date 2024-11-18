@@ -14,9 +14,6 @@ jobs:
   release:
     name: release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
     steps:
       - name: create release notes
         env:
@@ -26,4 +23,4 @@ jobs:
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
-              -F RELEASE.md
+              -F ./RELEASE.md
