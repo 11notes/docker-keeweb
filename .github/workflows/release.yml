@@ -15,6 +15,9 @@ jobs:
     name: release
     runs-on: ubuntu-latest
     steps:
+      - name: ls
+        run: |
+          ls -lah
       - name: create release notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
