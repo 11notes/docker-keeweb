@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: find
         run: |
-          env
+          ls -lah $GITHUB_WORKSPACE/*
       - name: create release notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
