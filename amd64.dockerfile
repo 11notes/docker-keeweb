@@ -54,7 +54,7 @@
         ${APP_ROOT};
 
 # :: Volumes
-  VOLUME ["${APP_ROOT}/etc", "${APP_ROOT}/var"]
+  VOLUME ["${APP_ROOT}/var"]
 
 # :: Monitor
   HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1

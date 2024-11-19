@@ -14,45 +14,46 @@ name: "keeweb"
 services:
   keeweb:
     image: "11notes/keeweb:1.18.7"
-    container_name: "keeweb"
     environment:
       TZ: Europe/Zurich
+      # user1 // foo
+      # user2 // bar
+      # escape $ with $
+      KEEWEB_HTPASSWD: |-
+        user1:$apr1$lG5s/RN7$jJ7nREeEyIJ155IA5jT9h1
+        user2:$apr1$fT6w1aEW$OJ4bzrQBlfPMM1RLV.Obf/
+      KEEWEB_CONFIG: |-
+        {
+          "settings":{
+            "theme":"te",
+            "locale":"en",
+            "autoUpdate":false,
+            "colorfulIcons":true,
+            "fontSize":1,
+            "canImportXml":false,
+            "canCreate":false,
+            "canOpenDemo":false,
+            "webdav":true,
+            "webdavSaveMethod":"put",
+            "hideEmptyFields":false,
+            "autoSave":true,
+            "idleMinutes":15
+          },
+          "files":[{
+            "storage":"webdav",
+            "name":"default",
+            "path":"/var/default.kdbx"
+          }]
+        }
     volumes:
-      - "etc:/keeweb/www/etc"
-      - "db:/keeweb/www/db"
+      - "etc:/keeweb/etc"
+      - "var:/keeweb/var"
     ports:
       - "8443:8443/tcp"
     restart: always
 volumes:
   etc:
-  db:
-```
-
-# EXAMPLES
-## config /keeweb/www/etc/default.json
-```yaml
-{
-  "settings":{
-    "theme":"te",
-    "locale":"en",
-    "autoUpdate":false,
-    "colorfulIcons":true,
-    "fontSize":1,
-    "canImportXml":false,
-    "canCreate":false,
-    "canOpenDemo":false,
-    "webdav":true,
-    "webdavSaveMethod":"put",
-    "hideEmptyFields":false,
-    "autoSave":true,
-    "idleMinutes":15
-  },
-  "files":[{
-    "storage":"webdav",
-    "name":"default",
-    "path":"/db/default.kdbx"
-  }]
-}
+  var:
 ```
 
 # DEFAULT SETTINGS
@@ -62,8 +63,6 @@ volumes:
 | `uid` | 1000 | user id 1000 |
 | `gid` | 1000 | group id 1000 |
 | `home` | /keeweb | home directory of user docker |
-| `401 login` | foo // bar | default login for demo |
-| `master password` | foo | default master password for demo |
 
 # ENVIRONMENT
 | Parameter | Value | Default |
@@ -83,5 +82,4 @@ volumes:
 * Use Let’s Encrypt certificates to protect your SSL endpoints
 
 # ElevenNotes<sup>™️</sup>
-This image is provided to you at your own risk. Always make backups before updating an image to a new version. Check the changelog for breaking changes. You can find all my repositories on [github](https://github.com/11notes).
-    
+This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [RELEASE.md](https://github.com/11notes/docker-keeweb/blob/1.18.7/RELEASE.md) for breaking changes. You can find all my repositories on [github](https://github.com/11notes).
